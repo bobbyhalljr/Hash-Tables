@@ -67,28 +67,7 @@ class HashTable:
             prev = node
             node = node.next
         prev.next = LinkedPair(key, value)
-        count += 1
-
-        # # hash the key
-        # index = self._hash_mod(key)
-        # # self.storage += 1
-        # # node = self.storage[index]
-        # # if index already exists print warning
-        # if self.storage[index] is not None:
-        #     print(f"Warning: Collision has occured at {index}")
-        #     self.storage[index] = LinkedPair(key, value)
-        #     # collision handling / iterate to end of SLL at index
-        #     node = self.storage[index]
-        #     prev = node
-        #     while node is not None:
-        #         prev = node
-        #         node = node.next
-        #     # add new node to the end of list at key/value pair
-        #     prev.next = LinkedPair(key, value)
-        # # else add index to storage
-        # else: 
-        #     self.storage[index] = (key, value)
-                       
+        count += 1                  
         
     def remove(self, key):
         '''
@@ -140,23 +119,6 @@ class HashTable:
             return None
         else:
             return node.value
-
-        # if self.storage[index] is not None:
-        #     if self.storage[index][0] == key:
-        #         return self.storage[index][1]
-        #     else: 
-                # print(f"WARNING: Collision has occurred at index {index}")
-        # node = self.storage[index]
-        # while node is not None and self.storage[index] != key:
-        #     node = node.next
-        # if node is None:
-        #     return None
-        # else:
-        #     return node.value
-        # else:
-        #     print("no key found!")
-        #     return None
-
 
     def resize(self):
         '''
