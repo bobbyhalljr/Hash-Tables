@@ -1,6 +1,6 @@
-# '''
+import hashlib
+
 # Linked List hash table key/value pair
-# '''
 class LinkedPair:
     def __init__(self, key, value):
         self.key = key
@@ -20,12 +20,11 @@ class HashTable:
     def _hash(self, key):
         '''
         Hash an arbitrary key and return an integer.
-
         You may replace the Python hash with DJB2 as a stretch goal.
         '''
         return hash(key)
-
-
+    
+    
     def _hash_djb2(self, key):
         '''
         Hash an arbitrary key using DJB2 hash
@@ -43,18 +42,46 @@ class HashTable:
         return self._hash(key) % self.capacity
 
 
-    def insert(self, key, value):
-        '''
+    '''
         Store the value with the given key.
 
         Hash collisions should be handled with Linked List Chaining.
 
         Fill this in.
         '''
-        pass
+    def insert(self, key, value):
+        index = self._hash_mod(key)
+        if self.storage[index] is not None:
+           print(f"Warning: Collision has occured at {index}")
 
+        else: 
+            self.storage[index] = (key, value)
+        
+        return 
+               
+       
+        # # increment 
+        # self.count += 1
+        # # index of key
+        # index = self._hash(key)
+        # # get the node linked to hash
+        # node = self.storage[index]
+        # # if bucket is empty
+        # if node is not None:
+        #     # create node and add it
+        #     self.storage[index] = LinkedPair(key, value)
+        #     return 
+        
+        # # collision handling / iterate to end of SLL at index
+        # prev = node
+        # while node is not None:
+        #     prev = node
+        #     node = node.next
 
-
+        # # add new node to the end of list at key/value pair
+        # prev.next = LinkedPair(key, value)
+        
+        
     def remove(self, key):
         '''
         Remove the value stored with the given key.
@@ -63,7 +90,15 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+
+        if self.storage[index] is not None:
+            if self.storage[index][0] == key:
+                
+            else: 
+                print(f"Warning: Collision has occured at {index}")
+
+        return 
 
 
     def retrieve(self, key):
@@ -84,12 +119,22 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        old_storage = self.storage
+        self.capacity *= 2
+        self.storage = [None] * self.capacity
+
+        for item in old_storage:
+            self.insert(item[0], item[1])
 
 
 
 if __name__ == "__main__":
     ht = HashTable(2)
+
+    # my own tests
+    print('hashed key -> ', ht._hash('hello'))
+    print('hashed_mod key -> ', ht._hash_mod('booooya'))
+    print('hash insert -> ', ht.insert('hi,', 'bye'))
 
     ht.insert("line_1", "Tiny hash table")
     ht.insert("line_2", "Filled beyond capacity")
