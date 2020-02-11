@@ -53,25 +53,41 @@ class HashTable:
         Fill this in.
         '''
     def insert(self, key, value):
-        # hash the key
+        count = 0
         index = self._hash_mod(key)
-        self.storage += 1
         node = self.storage[index]
-        # if index already exists print warning
-        if node is not None:
-            print(f"Warning: Collision has occured at {index}")
+        # if storage is empty
+        if node is None:
             self.storage[index] = LinkedPair(key, value)
-            # collision handling / iterate to end of SLL at index
-            # node = self.storage[index]
+            return
+        # insert into linked list
+        prev = node
+        # while storage is not empty
+        while node is not None:
             prev = node
-            while node is not None:
-                prev = node
-                node = node.next
-            # add new node to the end of list at key/value pair
-            prev.next = LinkedPair(key, value)
-        # else add index to storage
-        else: 
-            self.storage[index] = (key, value)
+            node = node.next
+        prev.next = LinkedPair(key, value)
+        count += 1
+
+        # # hash the key
+        # index = self._hash_mod(key)
+        # # self.storage += 1
+        # # node = self.storage[index]
+        # # if index already exists print warning
+        # if self.storage[index] is not None:
+        #     print(f"Warning: Collision has occured at {index}")
+        #     self.storage[index] = LinkedPair(key, value)
+        #     # collision handling / iterate to end of SLL at index
+        #     node = self.storage[index]
+        #     prev = node
+        #     while node is not None:
+        #         prev = node
+        #         node = node.next
+        #     # add new node to the end of list at key/value pair
+        #     prev.next = LinkedPair(key, value)
+        # # else add index to storage
+        # else: 
+        #     self.storage[index] = (key, value)
                        
         
     def remove(self, key):
@@ -84,18 +100,28 @@ class HashTable:
         '''
         # hash key into index in hashtable / find hased index
         index = self._hash_mod(key)
-
-
         if self.storage[index] is not None:
             # if the hashed key is found in index 0
             if self.storage[index][0] == key:
                 self.storage[index] = None      
             else: 
                 print(f"Warning: Collision has occured at index {index}")
+                node = self.storage[index]
+                while node is not None and self.storage[index] != key:
+                    prev = node
+                    node = node.next
+                    if node is None:
+                        return None
+                    else:
+                        self.storage -= 1
+                        result = node.value
+                    if prev is None:
+                        node = None
+                    else:
+                        prev.next = node.next.next
+                    return result
         else:
             print(f"WARNING: key {key} not found!")
-
-        return 
 
 
     def retrieve(self, key):
@@ -107,14 +133,29 @@ class HashTable:
         Fill this in.
         '''
         index = self._hash_mod(key)
-
-        if self.storage[index] is not None:
-            if self.storage[index][0] == key:
-                return self.storage[index][1]
-            else: 
-                print(f"WARNING: Collision has occurred at index {index}")
-        else:
+        node = self.storage[index]
+        while node is not None and node.key != key:
+            node = node.next
+        if node is None:
             return None
+        else:
+            return node.value
+
+        # if self.storage[index] is not None:
+        #     if self.storage[index][0] == key:
+        #         return self.storage[index][1]
+        #     else: 
+                # print(f"WARNING: Collision has occurred at index {index}")
+        # node = self.storage[index]
+        # while node is not None and self.storage[index] != key:
+        #     node = node.next
+        # if node is None:
+        #     return None
+        # else:
+        #     return node.value
+        # else:
+        #     print("no key found!")
+        #     return None
 
 
     def resize(self):
@@ -127,46 +168,52 @@ class HashTable:
         old_storage = self.storage
         self.capacity *= 2
         self.storage = [None] * self.capacity
+        curr = None
 
         for item in old_storage:
-            self.insert(item[0], item[1])
+            # set curr
+            curr = item
+            while curr is not None:
+                self.insert(curr.key, curr.value)
+                curr = curr.next
 
 
 
 if __name__ == "__main__":
     # My Own Tests
-    my_ht = HashTable(2)
+    # my_ht = HashTable(4)
 
-    my_ht.insert("bobby", "liberti")
-    my_ht.insert("iris", "liberti")
-    my_ht.insert("milo", "liberti")
+    # my_ht.insert("bobby", "liberti")
+    # my_ht.insert("iris", "liberti")
+    # my_ht.insert("milo", "liberti")
     # my_ht.remove("bobby")
+    # print(my_ht.retrieve("milo"))
 
-    print(my_ht.storage)
+    # print(my_ht.storage)
     
     # Lambda Tests
-    # ht = HashTable(2)
-    # ht.insert("line_1", "Tiny hash table")
-    # ht.insert("line_2", "Filled beyond capacity")
-    # ht.insert("line_3", "Linked list saves the day!")
+    ht = HashTable(2)
+    ht.insert("line_1", "Tiny hash table")
+    ht.insert("line_2", "Filled beyond capacity")
+    ht.insert("line_3", "Linked list saves the day!")
 
-    # print("")
+    print("")
 
-    # # Test storing beyond capacity
-    # print(ht.retrieve("line_1"))
-    # print(ht.retrieve("line_2"))
-    # print(ht.retrieve("line_3"))
+    # Test storing beyond capacity
+    print(ht.retrieve("line_1"))
+    print(ht.retrieve("line_2"))
+    print(ht.retrieve("line_3"))
 
-    # # Test resizing
-    # old_capacity = len(ht.storage)
-    # ht.resize()
-    # new_capacity = len(ht.storage)
+    # Test resizing
+    old_capacity = len(ht.storage)
+    ht.resize()
+    new_capacity = len(ht.storage)
 
-    # print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
-    # # Test if data intact after resizing
-    # print(ht.retrieve("line_1"))
-    # print(ht.retrieve("line_2"))
-    # print(ht.retrieve("line_3"))
+    # Test if data intact after resizing
+    print(ht.retrieve("line_1"))
+    print(ht.retrieve("line_2"))
+    print(ht.retrieve("line_3"))
 
-    # print("")
+    print("")
